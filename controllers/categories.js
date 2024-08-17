@@ -1,4 +1,5 @@
 const categoriesModel = require('../models/categories');
+const { toLowerCase } = require('../utils/formatText');
 
 module.exports = {
   getCategories,
@@ -19,15 +20,18 @@ async function getCategories(req, res) {
 }
 
 async function getCategoriesByType(req, res) {
-  // console.log("incoming - controller - getCategoriesByType req.params:", req.params)
   try {
+    // Extract and convert the type parameter to lowercase
     const { type } = req.params;
-    if (!type || !['Room', 'Furniture'].includes(type)) {
+    const lowercaseTypeName = toLowerCase(type);
+
+    // Check for valid category types, now in lowercase
+    if (!lowercaseTypeName || !['room', 'furniture'].includes(lowercaseTypeName)) {
       return res.status(400).json({ message: 'Invalid or missing category type' });
     }
 
-    const categories = await categoriesModel.getCategoriesByTypeData(type);
-    // console.log("outgoingcoming - controller - getCategoriesByType categories:", categories)
+    // Fetch categories based on the lowercase type
+    const categories = await categoriesModel.getCategoriesByTypeData(lowercaseTypeName);
     if (!categories || categories.length === 0) {
       return res.status(404).json({ message: 'No categories found for this type' });
     }

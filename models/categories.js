@@ -3,6 +3,7 @@ const categoriesDao = require('../daos/categories');
 module.exports = {
   getAllCategories,
   getCategoriesByTypeData,
+  getCategoryByName,
   createCategory,
   updateCategory,
   updateCategoriesData,
@@ -15,6 +16,10 @@ async function getAllCategories() {
 
 async function getCategoriesByTypeData(type) {
   return await categoriesDao.find({ categoryType: type });
+}
+
+async function getCategoryByName(categoryName) {
+  return await categoriesDao.findOne({ name: categoryName });
 }
 
 async function createCategory(categoryData) {
