@@ -1,10 +1,11 @@
 const productsModel = require('../models/products');
 const categoriesModel = require('../models/categories');
+const { toLowerCase } = require('../utils/formatText');
 
 module.exports = {
   getAllProducts,
   getProductById,
-  getProductsByCategory,
+  getProductsByCategoryName,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -32,22 +33,43 @@ async function getProductById(req, res) {
   }
 }
 
-async function getProductsByCategory(req, res) {
-  // console.log("incoming - controller - getProductsByCategory req.params:", req.params)
+async function getProductsByCategoryName(req, res) {
   try {
-    const { category_id } = req.params;
-    const products = await productsModel.getProductsByCategoryData(category_id);
-    // console.log("outgoingcoming - controller - getProductsByCategory products:", products)
+    const { category_name } = req.params;
+    const lowercaseCategoryName = toLowerCase(category_name);
+    console.log("In - CTRL - getPrdouctByCategoryName - lowercaseCategoryName:", lowercaseCategoryName)
+
+    const category = await categoriesModel.getCategoryByName(lowercaseCategoryName);
+    console.log("OUT - CTRL - getPrdouctByCategoryName - category:", category)
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    let products;
     
+    // Determine the category level and fetch products accordingly
+    if (category.level === 0) {
+      products = await productsModel.getProductsByRoomCategoryData(category._id);
+    } else if (category.level === 1) {
+      products = await productsModel.getProductsByFurnitureCategoryData(category._id);
+    } else if (category.level === 2) {
+      products = await productsModel.getProductsBySubCategoryData(category._id);
+    }
+
+    // Check if products are found
     if (!products || products.length === 0) {
       return res.status(404).json({ message: 'No products found for this category' });
     }
 
+    // Send the products as a response
     res.json(products);
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
+
+
 
 async function createProduct(req, res) {
   try {
@@ -126,4 +148,3 @@ async function getProductsBySubCategory(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
-

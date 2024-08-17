@@ -3,7 +3,9 @@ const productsDao = require('../daos/products');
 module.exports = {
   getAllProductsData,
   getProductById,
-  getProductsByCategoryData,
+  getProductsByRoomCategoryData,
+  getProductsByFurnitureCategoryData,
+  getProductsBySubCategoryData,
   createProductData,
   updateProductData,
   deleteProductData,
@@ -17,8 +19,19 @@ async function getProductById(productId) {
   return await productsDao.findById(productId);
 }
 
-async function getProductsByCategoryData(categoryId) {
-  return await productsDao.find({ roomCategory: categoryId });
+async function getProductsByRoomCategoryData(param) {
+  console.log("Incoming Model - Room - param:", param)
+  return await productsDao.find({ roomCategory: param });
+}
+
+async function getProductsByFurnitureCategoryData(param) {
+  console.log("Incoming Model - Furniture - param:", param)
+  return await productsDao.find({ furnitureCategory: param });
+}
+
+async function getProductsBySubCategoryData(param) {
+  console.log("Incoming Model - Sub - param:", param)
+  return await productsDao.find({ subCategory: param });
 }
 
 async function createProductData(productData) {
