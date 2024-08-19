@@ -2,6 +2,7 @@ const productsDao = require('../daos/products');
 
 module.exports = {
   getAllProductsData,
+  findProductsByQuery,
   getProductById,
   getProductsByRoomCategoryData,
   getProductsByFurnitureCategoryData,
@@ -13,6 +14,10 @@ module.exports = {
 
 async function getAllProductsData() {
   return await productsDao.find({});
+}
+
+async function findProductsByQuery(query) {
+  return await productsDao.find(query);
 }
 
 async function getProductById(productId) {

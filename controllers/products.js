@@ -14,12 +14,37 @@ module.exports = {
 
 async function getAllProducts(req, res) {
   try {
-    const products = await productsModel.getAllProductsData();
+    const { price_min, price_max, color, material, furnitureCategory, roomCategory } = req.query;
+
+    // Build the query object
+    const query = {};
+
+    // Add filters to query
+    if (price_min && price_max) {
+      query.price = { $gte: Number(price_min), $lte: Number(price_max) };
+    }
+    if (color) {
+      query.color = { $in: color.split(',') };
+    }
+    if (material) {
+      query.material = { $in: material.split(',') };
+    }
+    if (furnitureCategory) {
+      query.furnitureCategory = { $in: furnitureCategory.split(',').map(id => id.trim()) };
+    }
+    if (roomCategory) {
+      query.roomCategory = { $in: roomCategory.split(',').map(id => id.trim()) };
+    }
+
+    // Fetch products based on query
+    const products = await productsModel.findProductsByQuery(query);
+
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 async function getProductById(req, res) {
   try {
