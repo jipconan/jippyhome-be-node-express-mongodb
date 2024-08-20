@@ -4,6 +4,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 
+const corsOptions = {
+  origin: ['https://app.snipcart.com'], // Add Snipcart’s domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow required HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow required headers
+};
+
 var securityMiddleware = require('./middlewares/security');
 
 require("dotenv").config();
@@ -20,7 +26,7 @@ var finderRouter = require('./routes/finder');
 
 var app = express();
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
