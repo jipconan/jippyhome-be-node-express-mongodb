@@ -5,6 +5,7 @@ const { toLowerCase } = require('../utils/formatText');
 module.exports = {
   getAllProducts,
   getProductById,
+  getSnipcartProductById,
   getProductsByCategoryName,
   createProduct,
   updateProduct,
@@ -53,6 +54,40 @@ async function getProductById(req, res) {
       return res.status(404).json({ message: 'Product not found' });
     }
     res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// New function to remap data for Snipcart
+async function getSnipcartProductById(req, res) {
+  try {
+    const product = await productsModel.getProductById(req.params.product_id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Remap the product data to Snipcart's required format
+    const snipcartProduct = {
+      "id": product.public_id, 
+      "name": product.name,
+      "price": product.price,
+      "url": `/products/id/${product._id}`,
+      "description": product.description,
+      "image": product.imageUrl[0] || '',
+      "custom_fields": [
+        {
+          "name": "material",
+          "options": product.material || []
+        },
+        {
+          "name": "color",
+          "options": product.color || []
+        }
+      ]
+    };
+
+    res.json(snipcartProduct);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

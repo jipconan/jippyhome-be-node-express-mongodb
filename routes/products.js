@@ -9,6 +9,9 @@ router.get('/', productsCtrl.getAllProducts);
 // GET a single product by ID
 router.get('/:product_id', productsCtrl.getProductById);
 
+// GET a remapped snipcart JSON single product by ID
+router.get('/id/:product_id', productsCtrl.getSnipcartProductById);
+
 // GET all products based on CategoryName
 router.get('/type/:category_name', productsCtrl.getProductsByCategoryName);
 
