@@ -72,7 +72,7 @@ async function getSnipcartProductById(req, res) {
       "id": product.public_id, 
       "name": product.name,
       "price": product.price,
-      "url": `/products/id/${product._id}`,
+      "url": `https://jippyhome-be-node-express-mongodb.onrender.com/products/id/${product._id}`,
       "description": product.description,
       "image": product.imageUrl[0] || '',
       "custom_fields": [
