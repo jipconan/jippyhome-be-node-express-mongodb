@@ -33,7 +33,19 @@ const userSchema = new Schema({
     is_admin: {
         type: Boolean,
         default: false
-    }
+    },
+    addressLine1: {
+        type: String,
+        default: ""
+    },
+    addressLine2: {
+        type: String,
+        default: ""
+    },
+    postalCode: {
+        type: String,
+        default: ""
+    },
 }, {
     timestamps: true
 });
