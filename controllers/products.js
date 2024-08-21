@@ -62,33 +62,42 @@ async function getProductById(req, res) {
 // New function to remap data for Snipcart
 async function getSnipcartProductById(req, res) {
   try {
+    // Fetch product by ID from the database
     const product = await productsModel.getProductById(req.params.product_id);
+    
+    // Check if the product was found
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Remap the product data to Snipcart's required format
+    // Prepare custom fields based on product data
+    const materialOptions = product.material && product.material.length > 0 ? product.material : [];
+    const colorOptions = product.color && product.color.length > 0 ? product.color : [];
+
+    // Remap the product data to match frontend data attributes
     const snipcartProduct = {
       "id": product.public_id, 
-      "name": product.name,
-      "price": product.price,
-      "url": `https://jippyhome-be-node-express-mongodb.onrender.com/products/id/${product._id}`,
-      "description": product.description,
-      "image": product.imageUrl[0] || '',
+      "name": product.name,     
+      "price": product.price,   
+      "url": `https://jippyhome-be-node-express-mongodb.onrender.com/products/id/${product._id}`, 
+      "description": product.description, 
+      "image": product.imageUrl.length > 0 ? product.imageUrl[0] : '', 
       "custom_fields": [
         {
           "name": "material",
-          "options": product.material || []
+          "options": materialOptions 
         },
         {
-          "name": "color",
-          "options": product.color || []
+          "name": "color", 
+          "options": colorOptions 
         }
       ]
     };
 
+    // Respond with the formatted product data
     res.json(snipcartProduct);
   } catch (err) {
+    // Handle errors
     res.status(500).json({ error: err.message });
   }
 }
