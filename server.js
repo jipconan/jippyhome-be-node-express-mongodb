@@ -5,9 +5,9 @@ var logger = require('morgan');
 var cors = require('cors');
 
 const corsOptions = {
-  origin: ['https://app.snipcart.com'], // Add Snipcart’s domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow required HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow required headers
+  origin: ['http://localhost:5173', 'https://app.snipcart.com'], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
 };
 
 var securityMiddleware = require('./middlewares/security');
