@@ -5,9 +5,14 @@ var logger = require('morgan');
 var cors = require('cors');
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://snail-equal-vastly.ngrok-free.app', 'https://jippyhome-3d-e-commerce.onrender.com/', 'https://app.snipcart.com'], 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'], 
+  origin: [
+    'http://localhost:5173',
+    'https://snail-equal-vastly.ngrok-free.app',
+    'https://jippyhome-3d-e-commerce.onrender.com',
+    'https://app.snipcart.com'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 var securityMiddleware = require('./middlewares/security');
