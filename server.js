@@ -4,19 +4,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 
-// const corsOptions = {
-//   origin: [
-//     'http://localhost:5173',
-//     'https://snail-equal-vastly.ngrok-free.app',
-//     'https://jippyhome-3d-e-commerce.onrender.com',
-//     'https://app.snipcart.com'
-//   ],
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   credentials: true, 
-// };
-
-
 var securityMiddleware = require('./middlewares/security');
 
 require("dotenv").config();
@@ -33,14 +20,25 @@ var finderRouter = require('./routes/finder');
 
 var app = express();
 
-// Allow all origins, methods, and headers
+// Define allowed origins
+const allowedOrigins = [
+  'https://snail-equal-vastly.ngrok-free.app',
+  'http://localhost:5173',
+  'https://app.snipcart.com' // Example Snipcart API domain
+];
+
+// app.use(cors());
+// Configure CORS
 app.use(cors({
-  origin: '*',
-  methods: '*',
-  allowedHeaders: '*',
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true // Allow credentials to be included
 }));
-// app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
