@@ -21,27 +21,29 @@ var finderRouter = require('./routes/finder');
 var app = express();
 
 // Define allowed origins
-const allowedOrigins = [
-  'https://snail-equal-vastly.ngrok-free.app',
-  'http://localhost:5173',
-  'https://app.snipcart.com' 
-];
-
-// app.use(cors());
-// Configure CORS
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://snail-equal-vastly.ngrok-free.app',
+      'https://app.snipcart.com', 
+    ];
+
+    // Check if the origin is in the allowed origins list
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
 
+// app.use(cors());
+app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
