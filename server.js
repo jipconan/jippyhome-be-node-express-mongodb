@@ -25,9 +25,10 @@ const corsOptions = {
   origin: function (origin, callback) {
     // List of allowed origins
     const allowedOrigins = [
-      'http://localhost:3000',
       'https://snail-equal-vastly.ngrok-free.app',
       'https://app.snipcart.com', 
+      'http://localhost:3000',
+      'http://localhost:5173',
     ];
 
     // Check if the origin is in the allowed origins list
