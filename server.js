@@ -3,7 +3,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-const axios = require('axios');
 
 var securityMiddleware = require('./middlewares/security');
 
@@ -33,28 +32,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(securityMiddleware.checkJWT); 
-
-// Proxy endpoint to Snipcart
-app.use('/api/proxy/snipcart/*', async (req, res) => {
-  try {
-    // Build the full Snipcart URL
-    const snipcartUrl = `https://app.snipcart.com${req.originalUrl.replace('/api/proxy/snipcart', '')}`;
-
-    // Forward the request to Snipcart
-    const response = await axios({
-      method: req.method,
-      url: snipcartUrl,
-      headers: req.headers,
-      data: req.body,
-    });
-
-    // Send the response back to the client
-    res.status(response.status).json(response.data);
-  } catch (error) {
-    // Handle errors
-    res.status(error.response?.status || 500).json(error.response?.data || 'Error');
-  }
-});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
