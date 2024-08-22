@@ -24,21 +24,24 @@ var app = express();
 const allowedOrigins = [
   'https://snail-equal-vastly.ngrok-free.app',
   'http://localhost:5173',
-  'https://app.snipcart.com' // Example Snipcart API domain
+  'https://app.snipcart.com' 
 ];
 
 // app.use(cors());
 // Configure CORS
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true // Allow credentials to be included
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
