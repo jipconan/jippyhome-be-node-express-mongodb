@@ -20,33 +20,7 @@ var finderRouter = require('./routes/finder');
 
 var app = express();
 
-// Define allowed origins
-const corsOptions = {
-  origin: function (origin, callback) {
-    // List of allowed origins
-    const allowedOrigins = [
-      'https://snail-equal-vastly.ngrok-free.app',
-      'https://jippyhome-be-node-express-mongodb.onrender.com',
-      'https://jippyhome-3d-e-commerce.onrender.com',
-      'https://app.snipcart.com', 
-      'http://localhost:3000',
-      'http://localhost:5173',
-    ];
-
-    // Check if the origin is in the allowed origins list
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204,
-};
-
-// app.use(cors());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
