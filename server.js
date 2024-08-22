@@ -3,7 +3,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-var axios = require('axios'); 
 
 var securityMiddleware = require('./middlewares/security');
 
