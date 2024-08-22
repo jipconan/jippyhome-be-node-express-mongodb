@@ -21,12 +21,12 @@ var finderRouter = require('./routes/finder');
 var app = express();
 
 // CORS configuration (initial)
-// app.use(cors({
-//   origin: '*', // Allow any origin
-//   methods: 'GET,POST,PUT,DELETE,OPTIONS',
-//   allowedHeaders: 'Content-Type, Authorization, x-snipcart-publicapikey, x-snipcart-referer',
-//   credentials: true,
-// }));
+app.use(cors({
+  origin: '*', // Allow any origin
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+  allowedHeaders: 'Content-Type, Authorization, x-snipcart-publicapikey, x-snipcart-referer',
+  credentials: true,
+}));
 
 // Middleware for setting CORS headers and preflight requests
 app.use((req, res, next) => {
