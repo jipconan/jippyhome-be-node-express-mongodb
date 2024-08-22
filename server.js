@@ -20,7 +20,12 @@ var finderRouter = require('./routes/finder');
 
 var app = express();
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: '*', // Allow requests from any origin
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+  allowedHeaders: 'Content-Type,Authorization'
+}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
