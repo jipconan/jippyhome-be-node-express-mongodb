@@ -26,6 +26,8 @@ const corsOptions = {
     // List of allowed origins
     const allowedOrigins = [
       'https://snail-equal-vastly.ngrok-free.app',
+      'https://jippyhome-be-node-express-mongodb.onrender.com',
+      'https://jippyhome-3d-e-commerce.onrender.com',
       'https://app.snipcart.com', 
       'http://localhost:3000',
       'http://localhost:5173',
