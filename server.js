@@ -21,12 +21,19 @@ var finderRouter = require('./routes/finder');
 var app = express();
 
 // CORS configuration
+// app.use(cors({
+//   origin: '*', // Allow requests from any origin
+//   methods: 'GET,POST,PUT,DELETE,OPTIONS',
+//   allowedHeaders: 'Content-Type,Authorization',
+//   credentials: true,
+// }));
 app.use(cors({
-  origin: '*', // Allow requests from any origin
+  origin: 'https://snail-equal-vastly.ngrok-free.app', // Specify your frontend domain
   methods: 'GET,POST,PUT,DELETE,OPTIONS',
   allowedHeaders: 'Content-Type,Authorization',
   credentials: true,
 }));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
