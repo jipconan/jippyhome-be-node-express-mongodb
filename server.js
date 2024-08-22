@@ -25,7 +25,7 @@ app.use(cors({
   origin: '*', // Allow requests from any origin
   methods: 'GET,POST,PUT,DELETE,OPTIONS',
   allowedHeaders: 'Content-Type,Authorization',
-  credentials: false,
+  credentials: true,
 }));
 app.use(logger('dev'));
 app.use(express.json());
