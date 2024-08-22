@@ -33,6 +33,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(securityMiddleware.checkJWT); 
 
+// In your Express backend
+app.use('/api/proxy/snipcart', async (req, res) => {
+  try {
+    const response = await axios({
+      method: req.method,
+      url: `https://app.snipcart.com${req.originalUrl.replace('/api/proxy/snipcart', '')}`,
+      headers: req.headers,
+      data: req.body,
+    });
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json(error.response?.data || 'Error');
+  }
+});
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
