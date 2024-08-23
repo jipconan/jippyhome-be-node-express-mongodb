@@ -10,9 +10,16 @@ module.exports = {
 // Fetch orders by user ID
 async function getOrdersByUserId(req, res) {
   try {
+    // Assuming ordersModel.getOrdersByUserId returns an array of order objects
     const orders = await ordersModel.getOrdersByUserId(req.params.user_id);
-    // Return only the array of order IDs
-    res.json({ orderIds: orders.map(order => order._id) });
+    
+    // Map to extract only order IDs
+    const orderIdsArray = orders.map(order => order.orderIds);
+
+    console.log("out - ctrl - getOrdersByUserId - orderIdsArray:", orderIdsArray)
+    
+    // Return the array of order IDs
+    res.json(orderIdsArray);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
