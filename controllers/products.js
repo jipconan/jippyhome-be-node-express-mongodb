@@ -1,6 +1,6 @@
 const productsModel = require('../models/products');
 const categoriesModel = require('../models/categories');
-const { toLowerCase } = require('../utils/formatText');
+const { toLowerCase, formatArrayToPipeSeparatedString } = require('../utils/formatText');
 
 module.exports = {
   getAllProducts,
@@ -71,25 +71,25 @@ async function getSnipcartProductById(req, res) {
     }
 
     // Prepare custom fields based on product data
-    const materialOptions = product.material && product.material.length > 0 ? product.material : [];
-    const colorOptions = product.color && product.color.length > 0 ? product.color : [];
+    const materialOptions = formatArrayToPipeSeparatedString(product.material);
+    const colorOptions = formatArrayToPipeSeparatedString(product.color);
 
     // Remap the product data to match frontend data attributes
     const snipcartProduct = {
-      "id": product.public_id, 
-      "name": product.name,     
-      "price": product.price,   
-      "url": `https://jippyhome-be-node-express-mongodb.onrender.com/products/id/${product._id}`, 
-      "description": product.description, 
-      "image": product.imageUrl.length > 0 ? product.imageUrl[0] : '', 
-      "customFields": [
+      id: product.public_id,
+      name: product.name,
+      price: product.price,
+      url: `https://jippyhome-be-node-express-mongodb.onrender.com/products/id/${product._id}`,
+      description: product.description,
+      image: product.imageUrl.length > 0 ? product.imageUrl[0] : '',
+      customFields: [
         {
-          "name": "material",
-          "options": materialOptions 
+          name: "material",
+          options: materialOptions // Pipe-separated string
         },
         {
-          "name": "color", 
-          "options": colorOptions 
+          name: "color",
+          options: colorOptions // Pipe-separated string
         }
       ]
     };
@@ -101,6 +101,7 @@ async function getSnipcartProductById(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 async function getProductsByCategoryName(req, res) {
   try {
