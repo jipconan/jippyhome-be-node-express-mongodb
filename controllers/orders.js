@@ -1,29 +1,16 @@
 const ordersModel = require('../models/orders');
 
 module.exports = {
-  getOrders,
-  getOrderById,
+  getOrdersByUserId,
   createOrder,
   updateOrder,
   deleteOrder
 };
 
-async function getOrders(req, res) {
+async function getOrdersByUserId(req, res) {
   try {
-    const orders = await ordersModel.getAllOrders();
+    const orders = await ordersModel.getOrdersByUserId(req.params.user_id);
     res.json(orders);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-}
-
-async function getOrderById(req, res) {
-  try {
-    const order = await ordersModel.getOrderById(req.params.order_id);
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-    res.json(order);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -31,8 +18,22 @@ async function getOrderById(req, res) {
 
 async function createOrder(req, res) {
   try {
-    const newOrder = await ordersModel.createOrder(req.body);
-    res.status(201).json(newOrder);
+    // Find the existing UserOrder document
+    let userOrder = await ordersModel.getOrdersByUserId(req.params.user_id);
+    
+    // If not found, create a new UserOrder
+    if (!userOrder) {
+      userOrder = await ordersModel.createOrder({
+        userId: req.params.user_id,
+        orderIds: [req.params.order_id]
+      });
+    } else {
+      // Otherwise, add the new order_id
+      userOrder.orderIds.push(req.params.order_id);
+      userOrder = await userOrder.save();
+    }
+
+    res.status(201).json(userOrder);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -40,11 +41,18 @@ async function createOrder(req, res) {
 
 async function updateOrder(req, res) {
   try {
-    const updatedOrder = await ordersModel.updateOrder(req.params.order_id, req.body);
-    if (!updatedOrder) {
-      return res.status(404).json({ message: 'Order not found' });
+    // Find the existing UserOrder document
+    const userOrder = await ordersModel.getOrdersByUserId(req.params.user_id);
+
+    if (!userOrder) {
+      return res.status(404).json({ message: 'UserOrder not found' });
     }
-    res.json(updatedOrder);
+
+    // Push the new order_id into the orderIds array
+    userOrder.orderIds.push(req.params.order_id);
+    const updatedUserOrder = await userOrder.save();
+    
+    res.json(updatedUserOrder);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -52,12 +60,15 @@ async function updateOrder(req, res) {
 
 async function deleteOrder(req, res) {
   try {
-    const result = await ordersModel.deleteOrder(req.params.order_id);
-    if (!result) {
-      return res.status(404).json({ message: 'Order not found' });
+    const { user_id, order_id } = req.params;
+    const updatedUserOrder = await ordersModel.deleteOrder(user_id, order_id);
+    
+    if (!updatedUserOrder) {
+      return res.status(404).json({ message: 'UserOrder not found' });
     }
-    res.json({ message: 'Order deleted' });
+    res.json(updatedUserOrder);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
+
