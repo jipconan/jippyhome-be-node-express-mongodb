@@ -1,5 +1,6 @@
 module.exports = {
     toLowerCase,
+    formatArrayToPipeSeparatedString,
   };
 
 function toLowerCase(text) {
@@ -8,3 +9,8 @@ function toLowerCase(text) {
     }
     return text.toLowerCase();
   }
+
+  // Utility function to convert array to pipe-separated string
+function formatArrayToPipeSeparatedString(arr) {
+  return arr ? arr.join('|') : '';
+}
