@@ -70,9 +70,9 @@ async function getSnipcartProductById(req, res) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Prepare custom fields based on product data
-    const materialOptions = formatArrayToPipeSeparatedString(product.material);
-    const colorOptions = formatArrayToPipeSeparatedString(product.color);
+    // Prepare custom fields based on product data by converting arrays to pipe-separated strings
+    const materialOptions = product.material && product.material.length > 0 ? product.material.join('|') : '';
+    const colorOptions = product.color && product.color.length > 0 ? product.color.join('|') : '';
 
     // Remap the product data to match frontend data attributes
     const snipcartProduct = {
@@ -101,6 +101,7 @@ async function getSnipcartProductById(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 
 async function getProductsByCategoryName(req, res) {
