@@ -2,11 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const dotenv = require('dotenv');
-const fetch = require('node-fetch');
 
 dotenv.config();
 
-// Endpoint to get the Snipcart API key (for your reference)
 router.get('/key', (req, res) => {
   try {
     const apiKey = process.env.SNIPCART_API_KEY;
@@ -18,9 +16,6 @@ router.get('/key', (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// In-memory store for invoice numbers
-let invoiceStore = {};
 
 // Function to verify Snipcart request token
 async function verifyRequestToken(token) {
@@ -62,6 +57,5 @@ router.post('/webhook', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 module.exports = router;
