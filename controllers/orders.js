@@ -7,30 +7,35 @@ module.exports = {
   deleteOrder
 };
 
+// Fetch orders by user ID
 async function getOrdersByUserId(req, res) {
   try {
     const orders = await ordersModel.getOrdersByUserId(req.params.user_id);
-    res.json(orders);
+    // Return only the array of order IDs
+    res.json({ orderIds: orders.map(order => order._id) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
 
+// Create a new order
 async function createOrder(req, res) {
   try {
-    // Find the existing UserOrder document
-    let userOrder = await ordersModel.getOrdersByUserId(req.params.user_id);
-    
-    // If not found, create a new UserOrder
-    if (!userOrder) {
+    // Check if an order already exists for the user
+    let userOrder = await ordersModel.getOrdersByUserId(req.body.userId);
+
+    if (!userOrder || userOrder.length === 0) {
+      // Create a new order if none exists
       userOrder = await ordersModel.createOrder({
-        userId: req.params.user_id,
-        orderIds: [req.params.order_id]
+        userId: req.body.userId,
+        orderIds: [req.body.invoiceNumber]
       });
     } else {
-      // Otherwise, add the new order_id
-      userOrder.orderIds.push(req.params.order_id);
-      userOrder = await userOrder.save();
+      // Update the existing order with a new invoiceNumber
+      userOrder[0].orderIds.push(req.body.invoiceNumber);
+      userOrder = await ordersModel.updateOrder(userOrder[0]._id, {
+        orderIds: userOrder[0].orderIds
+      });
     }
 
     res.status(201).json(userOrder);
@@ -39,36 +44,33 @@ async function createOrder(req, res) {
   }
 }
 
+// Update an existing order (push new order ID)
 async function updateOrder(req, res) {
   try {
-    // Find the existing UserOrder document
     const userOrder = await ordersModel.getOrdersByUserId(req.params.user_id);
 
-    if (!userOrder) {
+    if (!userOrder || userOrder.length === 0) {
       return res.status(404).json({ message: 'UserOrder not found' });
     }
 
-    // Push the new order_id into the orderIds array
-    userOrder.orderIds.push(req.params.order_id);
-    const updatedUserOrder = await userOrder.save();
-    
+    // Push the new order ID into the orderIds array
+    userOrder[0].orderIds.push(req.body.invoiceNumber);
+    const updatedUserOrder = await ordersModel.updateOrder(userOrder[0]._id, {
+      orderIds: userOrder[0].orderIds
+    });
+
     res.json(updatedUserOrder);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
 
+// Delete an order by user ID and order ID
 async function deleteOrder(req, res) {
   try {
-    const { user_id, order_id } = req.params;
-    const updatedUserOrder = await ordersModel.deleteOrder(user_id, order_id);
-    
-    if (!updatedUserOrder) {
-      return res.status(404).json({ message: 'UserOrder not found' });
-    }
-    res.json(updatedUserOrder);
+    const updatedOrder = await ordersModel.deleteOrder(req.params.user_id, req.params.order_id);
+    res.json(updatedOrder);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
-

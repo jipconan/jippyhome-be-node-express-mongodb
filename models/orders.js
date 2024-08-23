@@ -7,20 +7,37 @@ module.exports = {
   deleteOrder
 };
 
+// Fetch orders by user ID
 async function getOrdersByUserId(userId) {
+  // Returns an array of orders, not just a single order
   return await ordersDao.find({ userId: userId });
 }
 
+// Create a new order or update an existing one
 async function createOrder(orderData) {
-  return await ordersDao.create(orderData);
+  // Check if an order for the user already exists
+  let userOrder = await ordersDao.findOne({ userId: orderData.userId });
+
+  if (!userOrder) {
+    // Create a new order if none exists
+    return await ordersDao.create(orderData);
+  } else {
+    // Update the existing order
+    userOrder.orderIds.push(...orderData.orderIds);
+    return await ordersDao.findByIdAndUpdate(userOrder._id, userOrder, { new: true });
+  }
 }
 
+// Update an existing order with new data
 async function updateOrder(orderId, orderData) {
+  // Update order by ID
   return await ordersDao.findByIdAndUpdate(orderId, orderData, { new: true });
 }
 
+// Delete a specific order ID from the user's orders
 async function deleteOrder(userId, orderId) {
   try {
+    // Find the user order
     const userOrder = await ordersDao.findOne({ userId });
     if (!userOrder) {
       throw new Error('UserOrder not found');
@@ -30,7 +47,7 @@ async function deleteOrder(userId, orderId) {
     userOrder.orderIds = userOrder.orderIds.filter(id => id !== orderId);
     
     // Save the updated document
-    return await userOrder.save();
+    return await ordersDao.findByIdAndUpdate(userOrder._id, userOrder, { new: true });
   } catch (err) {
     throw new Error(`Error deleting order: ${err.message}`);
   }

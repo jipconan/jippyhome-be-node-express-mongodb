@@ -6,12 +6,9 @@ const ordersCtrl = require('../controllers/orders');
 router.get('/:user_id', ordersCtrl.getOrdersByUserId);
 
 // POST create a new order
-router.post('/:user_id/:order_id', ordersCtrl.createOrder);
+router.post('/', ordersCtrl.createOrder);
 
-// PUT update an existing order by ID
-router.put('/:user_id/:order_id', ordersCtrl.updateOrder);
-
-// DELETE an order by ID
-router.delete('/:user_id/:order_id', ordersCtrl.deleteOrder);
+// PUT update orders by user_id (e.g., adding a new orderId to the user's orders)
+router.put('/:user_id', ordersCtrl.updateOrder);
 
 module.exports = router;
