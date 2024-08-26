@@ -8,6 +8,9 @@ router.get('/', categoriesCtrl.getCategories);
 // GET a single category by type
 router.get('/:type', categoriesCtrl.getCategoriesByType);
 
+// GET a single category by level
+router.get('/level/:level', categoriesCtrl.getCategoriesByLevel);
+
 // POST create a new category
 router.post('/', categoriesCtrl.createCategory);
 

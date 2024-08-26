@@ -3,6 +3,7 @@ const categoriesDao = require('../daos/categories');
 module.exports = {
   getAllCategories,
   getCategoriesByTypeData,
+  getCategoriesByLevelData,
   getCategoryByName,
   createCategory,
   updateCategory,
@@ -16,6 +17,10 @@ async function getAllCategories() {
 
 async function getCategoriesByTypeData(type) {
   return await categoriesDao.find({ categoryType: type });
+}
+
+async function getCategoriesByLevelData(level) {
+  return await categoriesDao.find({ level: level });
 }
 
 async function getCategoryByName(categoryName) {

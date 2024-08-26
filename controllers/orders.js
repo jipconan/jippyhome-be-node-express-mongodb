@@ -28,18 +28,24 @@ async function getOrdersByUserId(req, res) {
 // Create a new order
 async function createOrder(req, res) {
   try {
+    const invoiceNumber = req.body.invoiceNumber;
+    const userId = req.body.items[0].customFields.find(field => field.name === 'userId').value;
+
+    console.log("createOrder - invoiceNumber:", invoiceNumber)
+    console.log("createOrder - userId:", userId)
+
     // Check if an order already exists for the user
-    let userOrder = await ordersModel.getOrdersByUserId(req.body.userId);
+    let userOrder = await ordersModel.getOrdersByUserId(userId);
 
     if (!userOrder || userOrder.length === 0) {
       // Create a new order if none exists
       userOrder = await ordersModel.createOrder({
-        userId: req.body.userId,
-        orderIds: [req.body.invoiceNumber]
+        userId: userId,
+        orderIds: [invoiceNumber]
       });
     } else {
       // Update the existing order with a new invoiceNumber
-      userOrder[0].orderIds.push(req.body.invoiceNumber);
+      userOrder[0].orderIds.push(invoiceNumber);
       userOrder = await ordersModel.updateOrder(userOrder[0]._id, {
         orderIds: userOrder[0].orderIds
       });
@@ -54,14 +60,20 @@ async function createOrder(req, res) {
 // Update an existing order (push new order ID)
 async function updateOrder(req, res) {
   try {
-    const userOrder = await ordersModel.getOrdersByUserId(req.params.user_id);
+    const invoiceNumber = req.body.invoiceNumber;
+    const userId = req.body.items[0].customFields.find(field => field.name === 'userId').value;
+
+    console.log("createOrder - invoiceNumber:", invoiceNumber)
+    console.log("createOrder - userId:", userId)
+
+    const userOrder = await ordersModel.getOrdersByUserId(userId);
 
     if (!userOrder || userOrder.length === 0) {
       return res.status(404).json({ message: 'UserOrder not found' });
     }
 
     // Push the new order ID into the orderIds array
-    userOrder[0].orderIds.push(req.body.invoiceNumber);
+    userOrder[0].orderIds.push(invoiceNumber);
     const updatedUserOrder = await ordersModel.updateOrder(userOrder[0]._id, {
       orderIds: userOrder[0].orderIds
     });
