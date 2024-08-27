@@ -40,9 +40,12 @@ function checkSignIn(req, res, next) {
 function checkPermission(req, res, next) {
   // Status code of 401 is Unauthorized
   if (!req.user) return res.status(401).json("Unauthorized");
+
+  // console.log("req.payload:", req.user.payload)
+  // console.log("req.body:", req.body)
   
   // If the user is not the owner and is not an admin -> unauthorized
-  if (req.body.email !== req.user.payload.email && !req.user.is_admin) {
+  if (req.user.payload.email && !req.user.payload.is_admin) {
     return res.status(401).json("Unauthorized");
   }
   
