@@ -16,32 +16,61 @@ cloudinary.config({
 // Use express-fileupload middleware
 router.use(fileUpload({ useTempFiles: true }));
 
-// Route to handle file upload
-router.post('/upload', async (req, res) => {
+// Route to handle image upload
+router.post('/uploadimage', async (req, res) => {
   try {
-    // Log Request files
-    console.log("Client/cloudinary Request Files: ", req.files); 
+    // console.log("Client/cloudinary Request Files: ", req.files); 
+    // console.log("Client/cloudinary Request Folder: ", req.body.folder); 
 
-    // Log Request folder
-    console.log("Client/cloudinary Request Files: ", req.body.folder); 
-
-    // Comes back no file upload error
-    if (!req.files || Object.keys(req.files).length === 0) {
+    // Check if files are provided
+    if (!req.files || !req.files.image) {
       return res.status(400).send('No files were uploaded.');
     }
 
-    // Define File and Folder with their respective variable
-    const file = req.files.image;
+    const files = Array.isArray(req.files.image) ? req.files.image : [req.files.image];
     const folder = req.body.folder;
 
-    // Upload to cloudinary with PRESET name and folder name
-    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+    const uploadPromises = files.map(file => {
+      console.log("Uploading file:", file.tempFilePath); 
+
+      return cloudinary.uploader.upload(file.tempFilePath, {
         upload_preset: process.env.CLOUDINARY_PRESET,
         folder: folder,
+      }).then(result => result.secure_url);
+    });
+
+    const urls = await Promise.all(uploadPromises);
+
+    res.json({ urls });
+  } catch (error) {
+    console.error("Error uploading files:", error);
+    res.status(500).send({ error: error.message });
+  }
+});
+
+// Route to handle model upload
+router.post('/uploadmodel', async (req, res) => {
+  try {
+    // console.log("Client/cloudinary Request Files: ", req.files); 
+    // console.log("Client/cloudinary Request Folder: ", req.body.folder); 
+
+    if (!req.files || !req.files.model) {
+      return res.status(400).send('No file was uploaded.');
+    }
+
+    const file = req.files.model;
+    const folder = req.body.folder;
+
+    console.log("Uploading file:", file.tempFilePath); 
+
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      resource_type: 'raw', 
+      folder: folder,
     });
 
     res.json({ url: result.secure_url });
   } catch (error) {
+    console.error("Error uploading file:", error);
     res.status(500).send({ error: error.message });
   }
 });
