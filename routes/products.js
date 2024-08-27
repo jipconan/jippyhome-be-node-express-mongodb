@@ -16,12 +16,12 @@ router.get('/id/:product_id', productsCtrl.getSnipcartProductById);
 router.get('/type/:category_name', productsCtrl.getProductsByCategoryName);
 
 // POST create a new product
-router.post('/', securityMiddleware.checkPermission, productsCtrl.createProduct);
+router.post('/createproduct',securityMiddleware.checkSignIn, productsCtrl.createProduct);
 
 // PUT update an existing product by ID
-router.put('/updateproduct/:product_id', securityMiddleware.checkPermission, productsCtrl.updateProduct);
+router.put('/updateproduct/:product_id',securityMiddleware.checkSignIn, productsCtrl.updateProduct);
 
 // DELETE a product by ID
-router.delete('/deleteproduct/:product_id', securityMiddleware.checkPermission, productsCtrl.deleteProduct);
+router.delete('/deleteproduct/:product_id',securityMiddleware.checkSignIn, productsCtrl.deleteProduct);
 
 module.exports = router;
