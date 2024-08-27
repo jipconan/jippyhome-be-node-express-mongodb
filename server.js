@@ -3,7 +3,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-var createError = require('http-errors'); 
+var createError = require('http-errors'); // Add this line
 
 var securityMiddleware = require('./middlewares/security');
 
@@ -17,6 +17,7 @@ var categoriesRouter = require('./routes/categories');
 var ordersRouter = require('./routes/orders');
 var cloudinaryRouter = require('./client/cloudinary');
 var snipcartRouter = require('./client/snipcart');
+var finderRouter = require('./routes/finder');
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use('/categories', categoriesRouter);
 app.use('/orders', ordersRouter);
 app.use('/cloudinary', cloudinaryRouter);
 app.use('/snipcart', snipcartRouter);
+app.use('/finder', finderRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
