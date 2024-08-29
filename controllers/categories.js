@@ -4,6 +4,7 @@ const { toLowerCase } = require('../utils/formatText');
 module.exports = {
   getCategories,
   getCategoriesByType,
+  getCategoriesByName,
   getCategoriesByLevel,
   createCategory,
   updateCategory,
@@ -24,6 +25,7 @@ async function getCategoriesByType(req, res) {
   try {
     // Extract and convert the type parameter to lowercase
     const { type } = req.params;
+    console.log("In - getCategoriesByType - type:", type)
     const lowercaseTypeName = toLowerCase(type);
 
     // Check for valid category types, now in lowercase
@@ -42,6 +44,27 @@ async function getCategoriesByType(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
+async function getCategoriesByName(req, res) {
+  try {
+    const { name } = req.params;
+    const lowercaseCategoryName = toLowerCase(name);
+    console.log("In - CTRL - getCategoriesByName - lowercaseCategoryName:", lowercaseCategoryName)
+
+    const category = await categoriesModel.getCategoryByName(lowercaseCategoryName);
+    console.log("OUT - CTRL - getCategoriesByName - category:", category)
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    // Send the products as a response
+    res.json(category);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 
 async function getCategoriesByLevel(req, res) {
   try {
