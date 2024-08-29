@@ -7,7 +7,10 @@ var securityMiddleware = require('../middlewares/security');
 router.get('/', categoriesCtrl.getCategories);
 
 // GET a single category by type
-router.get('/:type', categoriesCtrl.getCategoriesByType);
+router.get('/categorytype/:type', categoriesCtrl.getCategoriesByType);
+
+// GET a single category by name
+router.get('/categoryname/:name', categoriesCtrl.getCategoriesByName);
 
 // GET a single category by level
 router.get('/level/:level', categoriesCtrl.getCategoriesByLevel);
