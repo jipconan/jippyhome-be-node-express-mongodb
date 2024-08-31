@@ -97,11 +97,12 @@ router.post('/webhook', async (req, res) => {
 
       console.log('Token is valid.');
 
+      // Perform additional processing asynchronously
+      await handleOrderProcessing(req.body);
+
       // Send a success response to Snipcart immediately
       res.status(200).json({ message: 'Webhook received and verified.' });
 
-      // Perform additional processing asynchronously
-      await handleOrderProcessing(req.body);
 
     } catch (tokenError) {
       console.error('Error during token verification:', tokenError.message);
