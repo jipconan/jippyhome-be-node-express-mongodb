@@ -101,7 +101,7 @@ router.post('/webhook', async (req, res) => {
       res.status(200).json({ message: 'Webhook received and verified.' });
 
       // Perform additional processing asynchronously
-      handleOrderProcessing(req.body);
+      await handleOrderProcessing(req.body);
 
     } catch (tokenError) {
       console.error('Error during token verification:', tokenError.message);
