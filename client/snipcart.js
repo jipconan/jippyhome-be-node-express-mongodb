@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const dotenv = require('dotenv');
 const axios = require('axios');
-const { createOrder, getOrdersByUserId } = require('../models/orders');
+const ordersModel = require('../models/orders');
 
 dotenv.config();
 
@@ -126,7 +126,7 @@ async function handleOrderProcessing(data) {
 
     // Create a new order if none exists
     if (!userOrder || userOrder.length === 0) {
-      await createOrder({ body: { invoiceNumber, items: [{ customFields: [{ name: 'userId', value: userId }] }] } });
+      await ordersModel.createOrder({ body: { invoiceNumber, items: [{ customFields: [{ name: 'userId', value: userId }] }] } });
     }
 
     console.log('Order processing completed successfully.');
