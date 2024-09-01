@@ -25,17 +25,17 @@ async function getProductById(productId) {
 }
 
 async function getProductsByRoomCategoryData(param) {
-  console.log("Incoming Model - Room - param:", param)
+  // console.log("Incoming Model - Room - param:", param)
   return await productsDao.find({ roomCategory: param });
 }
 
 async function getProductsByFurnitureCategoryData(param) {
-  console.log("Incoming Model - Furniture - param:", param)
+  // console.log("Incoming Model - Furniture - param:", param)
   return await productsDao.find({ furnitureCategory: param });
 }
 
 async function getProductsBySubCategoryData(param) {
-  console.log("Incoming Model - Sub - param:", param)
+  // console.log("Incoming Model - Sub - param:", param)
   return await productsDao.find({ subCategory: param });
 }
 

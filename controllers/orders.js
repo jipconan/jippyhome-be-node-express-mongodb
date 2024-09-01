@@ -16,7 +16,7 @@ async function getOrdersByUserId(req, res) {
     // Map to extract only order IDs
     const orderIdsArray = orders.map(order => order.orderIds);
 
-    console.log("out - ctrl - getOrdersByUserId - orderIdsArray:", orderIdsArray)
+    // console.log("out - ctrl - getOrdersByUserId - orderIdsArray:", orderIdsArray)
     
     // Return the array of order IDs
     res.json(orderIdsArray);
