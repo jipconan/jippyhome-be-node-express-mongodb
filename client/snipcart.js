@@ -130,19 +130,13 @@ async function handleOrderProcessing(data) {
         const userId = userIdField.value;
         console.log("check userId:", userId);
 
-        // Check if the user has existing orders
-        const userOrder = await ordersModel.getOrdersByUserId(userId);
-
-        // Create a new order if none exists
-        if (!userOrder || userOrder.length === 0) {
-          await ordersModel.createOrder({
-            body: { 
-              invoiceNumber, 
-              userId,
-            }
-          });
-        }
-
+        await ordersModel.createOrder({
+          body: { 
+            invoiceNumber, 
+            userId,
+          }
+        });
+    
         console.log('Order processing completed successfully.');
       } else {
         console.error('userId field not found in customFields.');
