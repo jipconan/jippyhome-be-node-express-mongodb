@@ -42,7 +42,7 @@ router.get('/orders', async (req, res) => {
     const fetchPromises = invoiceNumbers.map(invoice => {
       // Construct the URL with dynamic query parameters
       const SCARTURL = `https://app.snipcart.com/api/orders?offset=${offset}&limit=${limit}&invoiceNumber=${invoice}`;
-      console.log("client - SCARTURL for invoice:", SCARTURL);
+      // console.log("client - SCARTURL for invoice:", SCARTURL);
 
       // Return the axios promise for each invoiceNumber
       return axios.get(SCARTURL, {
@@ -60,7 +60,7 @@ router.get('/orders', async (req, res) => {
     const combinedData = responses.map(response => response.data);
 
     // Debugging: log combined data
-    console.log("client - combinedData:", combinedData);
+    // console.log("client - combinedData:", combinedData);
 
     res.json(combinedData);
   } catch (error) {

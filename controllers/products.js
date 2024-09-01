@@ -108,10 +108,10 @@ async function getProductsByCategoryName(req, res) {
   try {
     const { category_name } = req.params;
     const lowercaseCategoryName = toLowerCase(category_name);
-    console.log("In - CTRL - getPrdouctByCategoryName - lowercaseCategoryName:", lowercaseCategoryName)
+    // console.log("In - CTRL - getPrdouctByCategoryName - lowercaseCategoryName:", lowercaseCategoryName)
 
     const category = await categoriesModel.getCategoryByName(lowercaseCategoryName);
-    console.log("OUT - CTRL - getPrdouctByCategoryName - category:", category)
+    // console.log("OUT - CTRL - getPrdouctByCategoryName - category:", category)
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }
