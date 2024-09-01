@@ -3,6 +3,7 @@ const router = express.Router();
 const dotenv = require('dotenv');
 const axios = require('axios');
 const ordersModel = require('../models/orders');
+const mongoose = require("mongoose");
 
 dotenv.config();
 
@@ -24,9 +25,9 @@ router.get('/orders', async (req, res) => {
   const { invoiceNumber, offset = 0, limit = 50 } = req.query;
   
   // Debugging: log extracted parameters
-  console.log("client - invoiceNumber:", invoiceNumber);
-  console.log("client - offset:", offset);
-  console.log("client - limit:", limit);
+  // console.log("client - invoiceNumber:", invoiceNumber);
+  // console.log("client - offset:", offset);
+  // console.log("client - limit:", limit);
 
   try {
     const secretKey = process.env.SNIPCART_SECRET_KEY;
@@ -67,20 +68,15 @@ router.get('/orders', async (req, res) => {
   }
 });
 
-// Webhook endpoint
+/// Webhook endpoint
 router.post('/webhook', async (req, res) => {
   try {
-    // Log the incoming request body for debugging
-    console.log('Webhook event received:', JSON.stringify(req.body, null, 2));
-
-    // Check if the request token exists
     const requestToken = req.headers['x-snipcart-requesttoken'];
     if (!requestToken) {
       console.error('Request token missing in headers.');
       return res.status(400).json({ error: 'Request token is missing.' });
     }
 
-    // Verify the token with Snipcart
     const tokenVerificationUrl = `https://app.snipcart.com/api/requestvalidation/${requestToken}`;
     
     try {
@@ -97,12 +93,13 @@ router.post('/webhook', async (req, res) => {
 
       console.log('Token is valid.');
 
-      // Perform additional processing asynchronously
-      await handleOrderProcessing(req.body);
+      // Check if the event is 'order.completed'
+      if (req.body.eventName === 'order.completed') {
+        await handleOrderProcessing(req.body.content);  // Pass only the content to the function
+      }
 
       // Send a success response to Snipcart immediately
       res.status(200).json({ message: 'Webhook received and verified.' });
-
 
     } catch (tokenError) {
       console.error('Error during token verification:', tokenError.message);
@@ -116,25 +113,48 @@ router.post('/webhook', async (req, res) => {
 });
 
 // HELPER FUNCTION
-// Asynchronous function to handle order processing
 async function handleOrderProcessing(data) {
   try {
-    const invoiceNumber = data.content.invoiceNumber;
-    const userId = data.content.items[0].customFields.find(field => field.name === 'userId').value;
+    // console.log("data:", data);
 
-    // Assuming getOrdersByUserId is available to check if the order exists for the user
-    const userOrder = await ordersModel.getOrdersByUserId(userId);
+    const invoiceNumber = data.invoiceNumber;
 
-    // Create a new order if none exists
-    if (!userOrder || userOrder.length === 0) {
-      await ordersModel.createOrder({ body: { invoiceNumber, items: [{ customFields: [{ name: 'userId', value: userId }] }] } });
+    // Ensure the items array exists and is not empty
+    if (data.items && data.items.length > 0) {
+      // Loop through the items array to find the userId field in customFields
+      const userIdField = data.items[0].customFields.find(field => field.name === 'userId');
+      
+      if (userIdField && userIdField.value) {
+             
+        // Convert userId from string to ObjectId
+        const userId = userIdField.value;
+        console.log("check userId:", userId);
+
+        // Check if the user has existing orders
+        const userOrder = await ordersModel.getOrdersByUserId(userId);
+
+        // Create a new order if none exists
+        if (!userOrder || userOrder.length === 0) {
+          await ordersModel.createOrder({
+            body: { 
+              invoiceNumber, 
+              userId,
+            }
+          });
+        }
+
+        console.log('Order processing completed successfully.');
+      } else {
+        console.error('userId field not found in customFields.');
+      }
+    } else {
+      console.error('No items found in the order.');
     }
-
-    console.log('Order processing completed successfully.');
-
+    
   } catch (error) {
     console.error('Error processing order:', error.message);
   }
 }
+
 
 module.exports = router;
