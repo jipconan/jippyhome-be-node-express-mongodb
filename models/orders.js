@@ -21,21 +21,21 @@ async function createOrder(orderData) {
 
   if (!userOrder) {
     // Create a new order if none exists, initialize orderIds with the invoiceNumber
-    return await ordersDao.create({ 
-      userId: orderData.body.userId,  
-      orderIds: [orderData.body.invoiceNumber] 
+    return await ordersDao.create({
+      userId: orderData.body.userId,
+      orderIds: [orderData.body.invoiceNumber],
     });
   } else {
     // Update the existing order, ensure orderIds is an array
-    userOrder.orderIds.push(orderData.body.invoiceNumber); 
+    userOrder.orderIds.push(orderData.body.invoiceNumber);
     return await ordersDao.findByIdAndUpdate(userOrder._id, userOrder, { new: true });
   }
 }
 
 // Update an existing order with new data
-async function updateOrder(orderId, orderData) {
+async function updateOrder(orderId, userId) {
   // Update order by ID
-  return await ordersDao.findByIdAndUpdate(orderId, orderData, { new: true });
+  return await ordersDao.findByIdAndUpdate(orderId, userId, { new: true });
 }
 
 // Delete a specific order ID from the user's orders
