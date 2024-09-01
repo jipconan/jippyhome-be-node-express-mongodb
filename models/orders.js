@@ -16,11 +16,12 @@ async function getOrdersByUserId(userId) {
 // Create a new order or update an existing one
 async function createOrder(orderData) {
   // Check if an order for the user already exists
-  let userOrder = await ordersDao.findOne({ userId: orderData.userId });
+  console.log("orderData:", orderData)
+  let userOrder = await ordersDao.findOne({ userId: orderData.body.userId });
 
   if (!userOrder) {
     // Create a new order if none exists
-    return await ordersDao.create(orderData);
+    return await ordersDao.create(orderData.body);
   } else {
     // Update the existing order
     userOrder.orderIds.push(...orderData.orderIds);
