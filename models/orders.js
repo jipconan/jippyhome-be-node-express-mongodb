@@ -16,15 +16,18 @@ async function getOrdersByUserId(userId) {
 // Create a new order or update an existing one
 async function createOrder(orderData) {
   // Check if an order for the user already exists
-  console.log("orderData:", orderData)
+  console.log("orderData:", orderData);
   let userOrder = await ordersDao.findOne({ userId: orderData.body.userId });
 
   if (!userOrder) {
-    // Create a new order if none exists
-    return await ordersDao.create(orderData.body);
+    // Create a new order if none exists, initialize orderIds with the invoiceNumber
+    return await ordersDao.create({ 
+      userId: orderData.body.userId,  
+      orderIds: [orderData.body.invoiceNumber] 
+    });
   } else {
-    // Update the existing order
-    userOrder.orderIds.push(...orderData.orderIds);
+    // Update the existing order, ensure orderIds is an array
+    userOrder.orderIds.push(orderData.body.invoiceNumber); 
     return await ordersDao.findByIdAndUpdate(userOrder._id, userOrder, { new: true });
   }
 }
