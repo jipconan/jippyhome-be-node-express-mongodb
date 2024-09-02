@@ -119,13 +119,12 @@ async function handleOrderProcessing(data) {
 
     const invoiceNumber = data.invoiceNumber;
 
-    // Ensure the items array exists and is not empty
+  // Ensure the items array exists and is not empty
     if (data.items && data.items.length > 0) {
       // Loop through the items array to find the userId field in customFields
       const userIdField = data.items[0].customFields.find(field => field.name === 'userId');
       
       if (userIdField && userIdField.value) {
-             
         // Convert userId from string to ObjectId
         const userId = userIdField.value;
         console.log("check userId:", userId);
@@ -139,7 +138,9 @@ async function handleOrderProcessing(data) {
     
         console.log('Order processing completed successfully.');
       } else {
-        console.error('userId field not found in customFields.');
+        console.error('userId field not found in customFields. Skipping order processing.');
+        // Early return if userId is not found
+        return;
       }
     } else {
       console.error('No items found in the order.');

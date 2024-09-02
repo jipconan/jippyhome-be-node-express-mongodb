@@ -19,7 +19,7 @@ async function getOrdersByUserId(req, res) {
     // console.log("out - ctrl - getOrdersByUserId - orderIdsArray:", orderIdsArray)
     
     // Return the array of order IDs
-    res.json(orderIdsArray);
+    return res.json(orderIdsArray);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
